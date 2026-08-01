@@ -1,6 +1,7 @@
 from views import trainee_view
 from templates import trainee_template
 
+
 def main():
     # Inicializa los datos de la aplicación y el archivo JSON
     trainee_view.init_app_data()
@@ -12,9 +13,11 @@ def main():
         print("4. Eliminar un aprendiz")
         print("5. Buscar aprendices por nombre")
         print("6. Buscar aprendices por número de ficha")
-        print("7. Salir")
+        print("7. Exportar aprendices a CSV")
+        print("8. Salir")
+        print("----------------------------------------")
         
-        opcion = input("\nSelecciona una opción (1-7): ").strip()
+        opcion = input("Seleccione una opción (1-8): ").strip()
         
         if opcion == "1":
             trainee_view.register_trainee_view()
@@ -29,10 +32,12 @@ def main():
         elif opcion == "6":
             trainee_view.search_by_ficha_view()
         elif opcion == "7":
+            trainee_view.export_csv_view()
+        elif opcion == "8":
             print("\nSaliendo del programa. ¡Hasta luego!")
             break
         else:
-            trainee_template.display_message({"type": "error", "text": "Opción inválida. Por favor, selecciona un número entre 1 y 7."})
+            print("⚠️ Opción inválida. Por favor, seleccione un número entre 1 y 8.")
 
 if __name__ == "__main__":
     main()

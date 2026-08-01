@@ -90,3 +90,17 @@ def search_by_ficha_view():
     else:
         print(f"\n--- Resultados de búsqueda para la Ficha: {ficha_number} ---")
         trainee_template.display_trainee_list(results)
+
+def export_csv_view():
+    """Vista para exportar los aprendices a un archivo CSV."""
+    success = trainee_model.export_to_csv()
+    if success:
+        trainee_template.display_message({
+            "type": "success", 
+            "text": "Lista de aprendices exportada exitosamente a 'data/trainees_export.csv'."
+        })
+    else:
+        trainee_template.display_message({
+            "type": "info", 
+            "text": "No hay aprendices registrados para exportar."
+        })

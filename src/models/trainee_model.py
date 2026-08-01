@@ -1,6 +1,6 @@
 import json
 import os
-
+import csv
 
 # __file__ es src/models/trainee_model.py
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Estamos en src/models/
@@ -113,3 +113,26 @@ def register_trainee(new_trainee):
     trainees.append(new_trainee)
     save_data()
     return True
+
+
+def export_to_csv(filename="trainees_export.csv"):
+    """Exporta la lista de aprendices a un archivo CSV."""
+    load_data()
+    if not trainees:
+        return False
+    
+    # Asegurarnos de que exista la carpeta data o guardar en la raíz
+    os.makedirs("data", exist_ok=True)
+    filepath = os.path.join("data", filename)
+    
+    try:
+        # Obtenemos las llaves del diccionario a partir del primer aprendiz
+        keys = trainees[0].keys()
+        with open(filepath, mode="w", newline="", encoding="utf-8") as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=keys)
+            writer.writeheader()
+            writer.writerows(trainees)
+        return True
+    except Exception as e:
+        print(f"Error al exportar: {e}")
+        return False
