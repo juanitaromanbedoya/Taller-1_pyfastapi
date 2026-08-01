@@ -48,6 +48,36 @@ def get_all():
     load_data()
     return trainees
 
+def add_trainee(trainee_data):
+    """Agrega un nuevo aprendiz a la lista y guarda los cambios."""
+    load_data()
+    trainees.append(trainee_data)
+    save_data()
+
+def update_trainee(document, updated_data):
+    """Actualiza los datos de un aprendiz existente según su documento."""
+    load_data()
+    for index, trainee in enumerate(trainees):
+        if trainee["documento"] == document:
+            # Actualizamos los campos manteniendo el documento original
+            trainees[index].update(updated_data)
+            save_data()
+            return True
+    return False
+
+def delete_trainee(document):
+    """Elimina un aprendiz de la lista según su documento."""
+    load_data()
+    global trainees
+    initial_length = len(trainees)
+    # Filtramos la lista para sacar al aprendiz con ese documento
+    trainees = [t for t in trainees if t["documento"] != document]
+    
+    if len(trainees) < initial_length:
+        save_data()
+        return True
+    return False
+
 def search_by_document(document):
     """Busca un aprendiz por su número de documento."""
     load_data()
@@ -56,10 +86,29 @@ def search_by_document(document):
             return a
     return None
 
+def search_by_name(name_query):
+    """Busca aprendices que contengan el texto ingresado en su nombre."""
+    load_data()
+    # Usamos .lower() para que la búsqueda no distinga entre mayúsculas y minúsculas
+    results = [a for a in trainees if name_query.lower() in a["nombre"].lower()]
+    return results
+
+def search_by_file(ficha_number):
+    """Busca aprendices que pertenezcan a un número de ficha específico."""
+    load_data()
+    results = [a for a in trainees if a["ficha"] == ficha_number]
+    return results
+
+def search_by_ficha(ficha_number):
+    """Busca aprendices que pertenezcan a un número de ficha específico."""
+    load_data()
+    results = [a for a in trainees if a["ficha"] == ficha_number]
+    return results
+
 def register_trainee(new_trainee):
     """Registra un nuevo aprendiz si no existe previamente y guarda los cambios."""
     load_data()
-    if search_by_document(new_trainee["documento"]):
+    if search_by_file and search_by_name (new_trainee["Nombre,ficha"]):
         return False  # Ya existe
     trainees.append(new_trainee)
     save_data()
