@@ -1,57 +1,61 @@
 import re
 
-# Capa TEMPLATE: Interfaz de usuario por consola para registrar aprendices
+EMAIL_REGEX = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+
+
+def input_numeric(message):
+    """Solicita un dato numérico."""
+    while True:
+        value = input(message).strip()
+
+        if value.isdigit():
+            return int(value)
+
+        print("⚠️ Error: Solo se permiten números.")
+
+
+def input_name(message):
+    """Solicita un nombre válido."""
+    while True:
+        name = input(message).strip().title()
+
+        if re.fullmatch(r"[A-Za-zÁÉÍÓÚáéíóúÑñ ]+", name):
+            return name
+
+        print("⚠️ Error: El nombre solo puede contener letras y espacios.")
+
+
+def input_email(message):
+    """Solicita un correo válido."""
+    while True:
+        email = input(message).strip()
+
+        if re.fullmatch(EMAIL_REGEX, email):
+            return email
+
+        print("⚠️ Error: Correo electrónico inválido.")
+
+
+def input_document_type():
+    """Solicita el tipo de documento."""
+    while True:
+        document_type = input("Tipo de documento (CC/TI/CE): ").strip().upper()
+
+        if document_type in ("CC", "TI", "CE"):
+            return document_type
+
+        print("⚠️ Debe ingresar CC, TI o CE.")
 
 def get_trainee_input():
-    """Solicita al usuario los datos para registrar un aprendiz con validaciones robustas."""
-    
-    # 1. Validar documento (Debe ser numérico)
-    while True:
-        id_str = input("Número de documento: ").strip()
-        if id_str.isdigit():
-            id = int(id_str)
-            break
-        print("⚠️ Error: El número de documento debe contener solo dígitos.")
-
-    # 2. Tipo de documento
-    while True:
-        type_id = input("Tipo de documento (CC/TI/CE): ").strip().upper()
-        if type_id in ["CC", "TI", "CE"]:
-            break
-        print("⚠️ Opción inválida. Debe ser CC, TI o CE. Inténtalo de nuevo.")
-
-    # 3. Nombre completo (Validar que no esté vacío y contenga letras)
-    while True:
-        name = input("Nombre completo: ").strip().title()
-        if name and all(x.isalpha() or x.isspace() for x in name):
-            break
-        print("⚠️ Error: El nombre solo debe contener letras.")
-
-    # 4. Correo electrónico (Validar formato básico con expresiones regulares)
-    while True:
-        mail = input("Ingrese Correo electrónico: ").strip()
-        if "@" in mail and "." in mail: 
-            break
-        print("⚠️ Correo inválido. Debe incluir '@' y un punto '.'. Inténtalo de nuevo.")
-
-    # 5. Número de Ficha (Debe ser numérico)
-    while True:
-        group_str = input("Número de Ficha: ").strip()
-        if group_str.isdigit():
-            group_code = int(group_str)
-            break
-        print("⚠️ Error: El número de ficha debe contener solo dígitos.")
-
-    # 6. Programa de Formación
-    program = input("Programa de Formación: ").strip().title()
+    """Solicita los datos para registrar un aprendiz."""
 
     return {
-        "tipo_doc": type_id,
-        "documento": id,
-        "nombre": name,
-        "correo": mail,
-        "ficha": group_code,
-        "programa": program,
+        "tipo_doc": input_document_type(),
+        "documento": input_numeric("Número de documento: "),
+        "nombre": input_name("Nombre completo: "),
+        "correo": input_email("Correo electrónico: "),
+        "ficha": input_numeric("Número de ficha: "),
+        "programa": input("Programa de formación: ").strip().title()
     }
 
 
@@ -73,37 +77,14 @@ def display_trainee_list(trainee):
         )
 
 def get_update_input():
-    """Solicita los nuevos datos para actualizar un aprendiz."""
-    print("\n--- Actualizar Datos del Aprendiz ---")
-    type_id = input("Actualice tipo de documento (CC/TI/CE): ").strip().upper()
-    
-    while True:
-        name = input("Actualice nombre completo: ").strip().title()
-        if name and all(x.isalpha() or x.isspace() for x in name):
-            break
-        print("⚠️ Error: El nombre solo debe contener letras.")
-
-    while True:
-        mail = input("Actualice correo electrónico: ").strip()
-        if "@" in mail and "." in mail:
-            break
-        print("⚠️ Correo inválido. Debe incluir '@' y un punto '.'.")
-
-    while True:
-        group_str = input("Actualice número de ficha: ").strip()
-        if group_str.isdigit():
-            group_code = int(group_str)
-            break
-        print("⚠️ Error: La ficha debe ser numérica.")
-
-    program = input("Actualice programa de formación: ").strip().title()
+    """Solicita los nuevos datos del aprendiz."""
 
     return {
-        "tipo_doc": type_id,
-        "nombre": name,
-        "correo": mail,
-        "ficha": group_code,
-        "programa": program,
+        "tipo_doc": input_document_type(),
+        "nombre": input_name("Nuevo nombre: "),
+        "correo": input_email("Nuevo correo: "),
+        "ficha": input_numeric("Nueva ficha: "),
+        "programa": input("Nuevo programa: ").strip().title()
     }
 
 def get_name_to_search():
@@ -111,17 +92,18 @@ def get_name_to_search():
     return input("Ingrese el nombre o parte del nombre a buscar: ").strip()
 
 def get_ficha_to_search():
-    """Solicita el número de ficha para buscar."""
-    while True:
-        ficha_str = input("Ingrese el número de ficha a buscar: ").strip()
-        if ficha_str.isdigit():
-            return int(ficha_str)
-        print("⚠️ Error: El número de ficha debe contener solo dígitos.")
+    """Solicita el número de ficha."""
+    return input_numeric("Ingrese el número de ficha: ")
 
 def confirm_action(action_name):
     """Confirma si el usuario desea realizar una acción crítica (eliminar/actualizar)."""
     confirm = input(f"¿Estás seguro de que deseas {action_name} este aprendiz? (si/no): ").strip().lower()
     return confirm == "si"
+
+
+def get_document_to_search():
+    """Solicita el documento del aprendiz."""
+    return input_numeric("Ingrese el número de documento: ")
 
 def display_confirm_next():
     """Pregunta al usuario si desea registrar otro aprendiz."""
@@ -129,11 +111,3 @@ def display_confirm_next():
 
     next_option = input("").strip().lower()
     return next_option == "si"
-
-def get_document_to_search():
-    """Solicita el número de documento para buscar, actualizar o eliminar."""
-    while True:
-        doc_str = input("Ingrese el número de documento del aprendiz: ").strip()
-        if doc_str.isdigit():
-            return int(doc_str)
-        print("⚠️ Error: El documento debe contener solo dígitos.")
